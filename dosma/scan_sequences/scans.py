@@ -61,7 +61,7 @@ class ScanSequence(ScanIOMixin):
     """
 
     NAME = ""
-    __DEFAULT_SPLIT_BY__ = "EchoNumbers"
+    __DEFAULT_SPLIT_BY__ = "EchoTime"
 
     def __init__(self, volumes: Union[MedicalVolume, Sequence[MedicalVolume]]):
         self.volumes = volumes

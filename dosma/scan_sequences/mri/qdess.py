@@ -47,7 +47,7 @@ class QDess(ScanSequence):
     __NUM_ECHOS__ = 2
     __VOLUME_DIMENSIONS__ = 3
 
-    def __init__(self, volumes: Sequence[MedicalVolume]):
+    def __init__(self, volumes: Sequence[MedicalVolume]):   # возможно придется убрать
         if len(volumes) != 2:
             raise ValueError("QDess currently only supports 2 volumes.")
         super().__init__(volumes)

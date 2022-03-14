@@ -150,7 +150,7 @@ class CommandLineScanContainer:
                 dicom_path, group_by=group_by, ignore_ext=ignore_ext, num_workers=num_workers
             )
         else:
-            scan = self.load(load_path, num_workers=num_workers)
+            scan = self.load(load_path, group_by=group_by, ignore_ext=ignore_ext, num_workers=num_workers) # there is a point where data are loaded to the file!!!!
 
         self.scan = scan
         self.generic_args = {
