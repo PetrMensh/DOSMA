@@ -8,12 +8,30 @@ def mask_creation(x_dim, y_dim, x_0, y_0, x_1, y_1):
     mask[x_0:x_1, y_0:y_1] = 1
     return mask
 
+def numb_extraction(string):
+    num = ''
+    for character in string:
+        if character.isdigit() == True:
+            num += str(character)
+    return int(num)
+
+
+slice = 60
+mask_names = ["mask_06", "mask_11", "mask_08", "mask_16", "mask_12", "mask_14"]
+#mask_sixes = [[],
+#              [],
+#              [],
+#             [],
+#              [],
+#              []]
+
+path = "E:\CRIEPST\phantom_qDESS_different_GRAD\DICOM"
+
 dr = dosma.DicomReader(verbose=True)
-multi_echo_scan = dr.load("E:\CRIEPST\phantom_qDESS_different_GRAD\DICOM", group_by=['EchoNumbers', 'ProtocolName'])
+multi_echo_scan = dr.load(path, group_by=['EchoNumbers', 'ProtocolName'])
 a = tuple(multi_echo_scan)
 
 
-slice = 70
 S0 = a[int(len(a)/2)].volume[:, :, slice]
 protocol_name = [a[int(len(a)/2)].get_metadata("ProtocolName")]
 print(a[int(len(a)/2)].get_metadata("ProtocolName"))
@@ -32,36 +50,33 @@ for i in range(int(len(a)/2), len(a)):
     S = np.vstack((S, S_temp))
     protocol_name.append(protocol_name_temp)
 S = np.delete(S, (0), axis=0)
+protocol_name.remove(protocol_name[0])
+delta_k = list(map(lambda x: numb_extraction(x), protocol_name))
+print(delta_k)
 
-#S0 = a[8].volume[:, :, 70]
-#S1 = a[9].volume[:, :, 70]
-#S2 = a[10].volume[:, :, 70]
-#S3 = a[11].volume[:, :, 70]
-#S4 = a[12].volume[:, :, 70]
-#S5 = a[13].volume[:, :, 70]
-#S6 = a[14].volume[:, :, 70]
-#S7 = a[15].volume[:, :, 70]
-
-print(S.shape[1])
 mask = mask_creation(S.shape[1], S.shape[2], 130, 130, 150, 150)
-print(mask.max())
 
+values = []
 for i in range(0, S.shape[0]):
     S0_masked = np.multiply(S[i, :, :], mask)
     S0_masked[S0_masked == 0] = np.nan
-    percentil = np.nanpercentile(S0_masked, [25, 50, 75])
-    print(percentil)
+    percentil_temp = np.nanpercentile(S0_masked, [50])
+    percentil_temp = float(percentil_temp[0])
+    values.append(percentil_temp)
+print(values)
 
-#clim_values = np.nanpercentile(S[0, :, :], [5, 50, 95])
 plt.figure(dpi=200)
-imgplot = plt.imshow(np.multiply(S[0, :, :], mask), 'gray', interpolation='nearest')
-#imgplot = plt.imshow(np.multiply(S[0, :, :], mask), 'jet', interpolation='nearest')
-#imgplot.set_clim(clim_values[0], clim_values[2])
+#imgplot = plt.imshow(np.multiply(S[0, :, :] - S[4, :, :], mask), 'gray', interpolation='nearest')
+imgplot = plt.imshow(S[0, :, :] - S[1, :, :], 'gray', interpolation='nearest')
+imgplot.set_clim(-1, 1)
 plt.title('ADC map, 10^-3 mm^2/s')
 plt.colorbar()
+plt.savefig(path + '\\' + mask_names[0] + '.png')
 plt.show()
-#plt.savefig(folder + '\\' + str(dcm_general_dict['Patient_name']) + '_' + mask_name + '_ADC_map_slice' + str(mask.shape[0] - i) + '.png')
-plt.close('all')
 
-#b = a[8].volume
-#print(type(b[:, :, 70]))
+plt.scatter(delta_k, values)
+plt.xlabel('delta_k')
+plt.ylabel('values')
+plt.savefig(path + '\\' + mask_names[0] + '_graph.png')
+plt.show()
+plt.close('all')
