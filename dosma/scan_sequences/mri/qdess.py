@@ -40,8 +40,8 @@ class QDess(ScanSequence):
     NAME = "qdess"
 
     # DESS DICOM header keys
-    __GL_AREA_TAG__ = Tag(0x001910B6)
-    __TG_TAG__ = Tag(0x001910B7)
+    __GL_AREA_TAG__ = 31.3 #Tag(0x001910B6)
+    __TG_TAG__ = 1 #Tag(0x001910B7)
 
     # DESS constants
     __NUM_ECHOS__ = 2
@@ -161,6 +161,9 @@ class QDess(ScanSequence):
         Returns:
             qv.T2: T2 fit map.
         """
+
+        gl_area = 20.88
+        tg = 1
 
         if self.volumes is None or self.ref_dicom is None:
             raise ValueError("volumes and ref_dicom fields must be initialized")

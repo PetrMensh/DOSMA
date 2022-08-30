@@ -72,7 +72,7 @@ def model_from_config(cfg_file_or_dict, weights_dir=None, **kwargs) -> SegModel:
 
     if isinstance(cfg_file_or_dict, str):
         with open(cfg_file_or_dict, "r") as f:
-            cfg = yaml.load(f)
+            cfg = yaml.safe_load(f)
     else:
         cfg = cfg_file_or_dict
 
